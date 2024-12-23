@@ -29,12 +29,13 @@ export const deletePost = async (postId) => {
 
 // Like/Unlike a post
 export const likePost = async (postId) => {
-    const response = await axios.put(`${base_url}/${postId}/like`,config);
+    const response = await axios.put(`${base_url}posts/${postId}/like`,{}, config);
     return response.data;
 };
 
 // Add a comment to a post
 export const addComment = async (postId, commentData) => {
-    const response = await axios.post(`${base_url}/${postId}/comment`, commentData,config);
+    // console.log(commentData)
+    const response = await axios.post(`${base_url}posts/${postId}/comments`, { text: commentData }, config);
     return response.data;
 };

@@ -66,14 +66,17 @@ export const likePostAsync = createAsyncThunk(
 
 export const addCommentAsync = createAsyncThunk(
     "posts/addComment",
-    async ({ postId, commentData }, { rejectWithValue }) => {
+    async ({ postId, comment }, { rejectWithValue }) => {
         try {
-            return await addComment(postId, commentData);
+            // console.log(comment)
+            return await addComment(postId,  comment);
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
     }
 );
+
+
 
 // Slice
 const postSlice = createSlice({
@@ -150,12 +153,18 @@ const postSlice = createSlice({
             state.error = null;
         });
         builder.addCase(likePostAsync.fulfilled, (state, action) => {
+            const updatedPost = action.payload?.data;
+            if (updatedPost && updatedPost._id) {
+                state.posts = state.posts.map((post) =>
+                    post._id === updatedPost._id ? updatedPost : post
+                );
+            } else {
+                console.error('Invalid updated post data:', updatedPost);
+            }
             state.loading = false;
-            const updatedPost = action.payload.data;
-            state.posts = state.posts.map((post) =>
-                post._id === updatedPost._id ? updatedPost : post
-            ); // Update the post with new like data
         });
+
+
         builder.addCase(likePostAsync.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
@@ -167,14 +176,16 @@ const postSlice = createSlice({
             state.error = null;
         });
         builder.addCase(addCommentAsync.fulfilled, (state, action) => {
-            state.loading = false;
-            const { postId, comment } = action.meta.arg; // Use meta to get the original arguments
+            const { postId, comment } = action.meta.arg;  // Get the postId and new comment from the action
             state.posts = state.posts.map((post) =>
                 post._id === postId
-                    ? { ...post, comments: [...post.comments, comment] }
+                    ? { ...post, comments: [...post.comments, comment] }  // Add the new comment
                     : post
-            ); // Add the new comment to the relevant post
+            );
+            state.loading = false;
         });
+
+
         builder.addCase(addCommentAsync.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;

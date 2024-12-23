@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPostsBySkills, likePostAsync, addCommentAsync } from "../features/Post/postSlice.js";
+import {
+    fetchPostsBySkills,
+    likePostAsync,
+    addCommentAsync,
+    createPostAsync,
+} from "../features/Post/postSlice.js";
 import moment from "moment";
 
 function Home() {
@@ -8,8 +13,8 @@ function Home() {
     const { posts, loading } = useSelector((state) => state.posts);
     const [newPostContent, setNewPostContent] = useState("");
     const [newPostTitle, setNewPostTitle] = useState("");
-    const [commentPanels, setCommentPanels] = useState({}); // Tracks open comments panels
-    const [newComments, setNewComments] = useState({}); // Tracks new comments for each post
+    const [commentPanels, setCommentPanels] = useState({});
+    const [newComments, setNewComments] = useState({});
 
     useEffect(() => {
         dispatch(fetchPostsBySkills());
@@ -35,8 +40,10 @@ function Home() {
     };
 
     const handleAddComment = (postId) => {
-        if (newComments[postId]?.trim()) {
-            dispatch(addCommentAsync({ postId, comment: newComments[postId] }));
+        const commentText = newComments[postId]?.trim();
+        if (commentText) {
+            console.log("Adding comment:", { postId, comment: commentText });
+            dispatch(addCommentAsync({ postId, comment: commentText }));
             setNewComments((prev) => ({ ...prev, [postId]: "" }));
         }
     };
@@ -127,13 +134,19 @@ function Home() {
                         {commentPanels[post._id] && (
                             <div className="mt-4">
                                 <div className="space-y-2">
-                                    {post.comments.map((comment, index) => (
-                                        <p
-                                            key={index}
+                                    {post.comments.map((comment) => (
+                                        <div
+                                            key={comment._id}
                                             className="text-gray-700 bg-gray-100 p-2 rounded-lg"
                                         >
-                                            {comment}
-                                        </p>
+                                            <p>
+                                                <strong>User:</strong> {comment.user}
+                                            </p>
+                                            <p>{comment.text}</p>
+                                            <p className="text-sm text-gray-500">
+                                                {moment(comment.createdAt).fromNow()}
+                                            </p>
+                                        </div>
                                     ))}
                                 </div>
                                 <div className="flex items-center gap-2 mt-2">

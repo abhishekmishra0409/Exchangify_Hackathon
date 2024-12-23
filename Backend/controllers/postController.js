@@ -1,6 +1,8 @@
 const Post = require("../models/postModels");
 const deleteFromCloud = require('../configs/Cloud Config/deleteFromCloud');
 const uploadOnCloudinary = require('../configs/Cloud Config/uploadOnCloud');
+const mongoose = require("mongoose");
+
 
 // Create a new post
 exports.createPost = async (req, res) => {
@@ -177,7 +179,22 @@ exports.addComment = async (req, res) => {
     try {
         const { postId } = req.params;
         const { text } = req.body;
-        const userId = req.user.id;
+
+        // Validate `text` field
+        if (!text || typeof text !== "string") {
+            return res.status(400).json({ success: false, message: "Comment text is required" });
+        }
+
+        // Validate `postId`
+        if (!mongoose.Types.ObjectId.isValid(postId)) {
+            return res.status(400).json({ success: false, message: "Invalid post ID" });
+        }
+
+        // Get `userId` from `req.user`
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
 
         // Check if the post exists
         const post = await Post.findById(postId);
@@ -185,7 +202,7 @@ exports.addComment = async (req, res) => {
             return res.status(404).json({ success: false, message: "Post not found" });
         }
 
-        // Add the comment directly to the post's comments array
+        // Add comment to the post
         const comment = {
             user: userId,
             text,
@@ -202,6 +219,8 @@ exports.addComment = async (req, res) => {
             data: comment,
         });
     } catch (error) {
+        console.error("Error adding comment:", error.message);
         res.status(500).json({ success: false, message: "Failed to add comment", error: error.message });
     }
 };
+
