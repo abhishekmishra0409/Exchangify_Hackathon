@@ -1,32 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    fetchPostsBySkills,
-    likePostAsync,
-    addCommentAsync,
-    createPostAsync,
-} from "../features/Post/postSlice.js";
+import { fetchPostsBySkills, likePostAsync, addCommentAsync } from "../features/Post/postSlice.js";
 import moment from "moment";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Home() {
     const dispatch = useDispatch();
+    const navigate = useNavigate(); // Initialize useNavigate
     const { posts, loading } = useSelector((state) => state.posts);
-    const [newPostContent, setNewPostContent] = useState("");
-    const [newPostTitle, setNewPostTitle] = useState("");
     const [commentPanels, setCommentPanels] = useState({});
     const [newComments, setNewComments] = useState({});
 
     useEffect(() => {
         dispatch(fetchPostsBySkills());
     }, [dispatch]);
-
-    const handleAddPost = () => {
-        if (newPostContent.trim() && newPostTitle.trim()) {
-            dispatch(createPostAsync({ title: newPostTitle, content: newPostContent }));
-            setNewPostContent("");
-            setNewPostTitle("");
-        }
-    };
 
     const handleLikePost = (postId) => {
         dispatch(likePostAsync(postId));
@@ -42,41 +29,15 @@ function Home() {
     const handleAddComment = (postId) => {
         const commentText = newComments[postId]?.trim();
         if (commentText) {
-            console.log("Adding comment:", { postId, comment: commentText });
             dispatch(addCommentAsync({ postId, comment: commentText }));
             setNewComments((prev) => ({ ...prev, [postId]: "" }));
         }
     };
 
+
+
     return (
         <div className="bg-gray-100 min-h-screen p-4">
-            {/* Add New Post Section */}
-            <div className="bg-white p-4 rounded-lg shadow-md mb-4">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-                    <input
-                        type="text"
-                        value={newPostTitle}
-                        onChange={(e) => setNewPostTitle(e.target.value)}
-                        placeholder="Post Title"
-                        className="flex-grow border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-                    />
-                </div>
-                <div className="flex items-center gap-4">
-                    <textarea
-                        value={newPostContent}
-                        onChange={(e) => setNewPostContent(e.target.value)}
-                        placeholder="What's on your mind?"
-                        className="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    ></textarea>
-                    <button
-                        onClick={handleAddPost}
-                        className="bg-blue-500 text-white px-6 py-2 rounded-lg"
-                    >
-                        Add
-                    </button>
-                </div>
-            </div>
 
             {/* Posts Feed */}
             {loading ? (

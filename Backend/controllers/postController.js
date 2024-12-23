@@ -73,8 +73,7 @@ exports.getPosts = async (req, res) => {
         });
     }
 };
-
-//user get his own posts
+// User gets his own posts
 exports.getUserPosts = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -82,17 +81,11 @@ exports.getUserPosts = async (req, res) => {
         // Fetch posts created by the user
         const posts = await Post.find({ user: userId }).sort({ createdAt: -1 });
 
-        if (!posts || posts.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No posts found for this user",
-            });
-        }
-
+        // If no posts are found, return an empty array instead of a 404 error
         res.status(200).json({
             success: true,
-            message: "User's posts retrieved successfully",
-            data: posts,
+            message: posts.length === 0 ? "No posts found for this user" : "User's posts retrieved successfully",
+            data: posts, // This will be an empty array if no posts are found
         });
     } catch (error) {
         res.status(500).json({
@@ -102,6 +95,7 @@ exports.getUserPosts = async (req, res) => {
         });
     }
 };
+
 
 // Delete a post
 exports.deletePost = async (req, res) => {
