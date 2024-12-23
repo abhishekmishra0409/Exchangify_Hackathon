@@ -4,9 +4,6 @@ const { signupController, loginController } = require("../controllers/userContro
 const { updateUserDetails, getAllDetails } = require("../controllers/updateDetailsControllers");
 const { checkUser } = require("../middlewares/authMiddleware");
 
-router.get("/", (req,res) => {
-    res.send("auth routes are working");
-})
 
 router.post("/signup", signupController);
 router.post("/login", loginController);

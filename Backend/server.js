@@ -7,6 +7,7 @@ const path = require("path");
 const authRoutes = require("./routes/authenticationRoutes");
 const collabRoutes = require("./routes/collabRoute")
 const inviteRoutes = require("./routes/inviteRoute")
+const postRoute = require("./routes/postRoute")
 
 // Environment variables
 require("dotenv").config();
@@ -44,6 +45,8 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/collab", collabRoutes);
 app.use("/invite", inviteRoutes);
+app.use("/posts", postRoute);
+
 
 // Handle 404 errors
 app.use((req, res) => {
