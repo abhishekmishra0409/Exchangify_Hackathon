@@ -18,17 +18,17 @@ export const login = createAsyncThunk('user/login', async (credentials, thunkAPI
     }
 });
 
-export const getUserDetails = createAsyncThunk('user/getDetails', async (token, thunkAPI) => {
+export const getUserDetails = createAsyncThunk('user/getDetails', async ( thunkAPI) => {
     try {
-        return await userService.getUserDetails(token);
+        return await userService.getUserDetails();
     } catch (error) {
         return thunkAPI.rejectWithValue(error.message || 'Failed to fetch user details');
     }
 });
 
-export const updateUserDetails = createAsyncThunk('user/updateDetails', async ({ userData, token }, thunkAPI) => {
+export const updateUserDetails = createAsyncThunk('user/updateDetails', async ({ userData }, thunkAPI) => {
     try {
-        return await userService.updateUserDetails(userData, token);
+        return await userService.updateUserDetails(userData);
     } catch (error) {
         return thunkAPI.rejectWithValue(error.message || 'Failed to update user details');
     }

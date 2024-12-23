@@ -1,5 +1,6 @@
 import { base_url } from "../../utils/baseUrl.js";
 import axios from 'axios';
+import {config}  from "../../utils/axiosConfig.js";
 
 
 const userService = {
@@ -17,6 +18,12 @@ const userService = {
   async login(credentials) {
     try {
       const response = await axios.post(`${base_url}auth/login`, credentials);
+      // console.log(response.data)
+      if (response.data) {
+        localStorage.setItem("user", JSON.stringify(response.data.userDetails));
+        localStorage.setItem("token", JSON.stringify(response.data.userDetails.token));
+
+      }
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Login failed, try again later' };
@@ -24,10 +31,10 @@ const userService = {
   },
 
   // Get user details
-  async getUserDetails(token) {
+  async getUserDetails() {
     try {
       const response = await axios.get(`${base_url}auth/getUserDetails`, {
-        headers: { Authorization: `Bearer ${token}` },
+        config,
       });
       return response.data;
     } catch (error) {
@@ -36,7 +43,7 @@ const userService = {
   },
 
   // Update user details
-  async updateUserDetails(userData, token) {
+  async updateUserDetails(userData) {
     try {
       const formData = new FormData();
       Object.entries(userData).forEach(([key, value]) => {
@@ -44,10 +51,7 @@ const userService = {
       });
 
       const response = await axios.put(`${base_url}/update`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+        config,
       });
       return response.data;
     } catch (error) {
