@@ -1,22 +1,20 @@
 import './App.css'
-import Header from "./Components/Header.jsx";
-import HeroSection from "./Components/HeroSection.jsx";
-import WelcomeSection from "./Components/WelcomeSection.jsx";
-import ExpertiseSection from "./Components/ExpertiseSection.jsx";
-import CollaborationSection from "./Components/CollaborationSection.jsx";
-import SkillExchangeSection from "./Components/SkillExchangeSection.jsx";
-
+import { Route, Routes } from 'react-router-dom'
+import LandingPage from './Components/LandingPage'
+import Signup from './Components/Authentication/Signup'
+import Login from './Components/Authentication/Login'
 function App() {
 
 
   return (
     <>
-  <Header/>
-      <HeroSection/>
-        <WelcomeSection/>
-      <ExpertiseSection/>
-        <CollaborationSection/>
-        <SkillExchangeSection/>
+      <div>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} /> 
+        </Routes>
+      </div>
     </>
   )
 }
