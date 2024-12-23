@@ -12,7 +12,7 @@ const ExpertiseSection = () => {
                     {categories.map((category) => (
                         <div
                             key={category.name}
-                            className={`bg-white shadow-md rounded-lg p-10 flex flex-col items-center ${category.bgColor}`}
+                            className={`shadow-md rounded-lg p-10 flex flex-col items-center ${category.bgColor}`}
                         >
                             <div
                                 className={`h-16 w-16 flex items-center justify-center rounded-full mb-4 bg-white`}

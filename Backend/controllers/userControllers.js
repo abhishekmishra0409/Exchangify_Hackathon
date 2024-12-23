@@ -1,5 +1,5 @@
 const user = require("../models/userModel");
-const uploadOnCloudinary = require("../utils/Cloud Config/uploadOnCloud");
+const uploadOnCloudinary = require("../configs/Cloud Config/uploadOnCloud");
 const generateToken = require("../utils/generateToken");
 
 const signupController = async(req,res) =>{

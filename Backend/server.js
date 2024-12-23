@@ -18,11 +18,11 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Database connection
-const mongo = require("./utils/dbConnection");
+const mongo = require("./database/dbConnection");
 mongo.connection;
 
 // Cloudinary connection
-const cloudinary = require('./utils/Cloud Config/cloudConnection');
+const cloudinary = require('./database/cloudConnection');
 
 // Middlewares
 app.use(cors());

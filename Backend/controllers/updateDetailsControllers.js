@@ -1,6 +1,6 @@
 const User = require('../models/userModel');
-const deleteFromCloud = require('../utils/Cloud Config/deleteFromCloud');
-const uploadOnCloudinary = require('../utils/Cloud Config/uploadOnCloud');
+const deleteFromCloud = require('../configs/Cloud Config/deleteFromCloud');
+const uploadOnCloudinary = require('../configs/Cloud Config/uploadOnCloud');
 
 // Get all details of a user
 const getAllDetails = async (req, res) => {

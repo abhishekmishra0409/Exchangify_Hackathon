@@ -1,4 +1,4 @@
-const cloudinary = require("./cloudConnection");
+const cloudinary = require("../../database/cloudConnection");
 
 const deleteFromCloud = async (publicId) =>{
    try {

@@ -5,7 +5,7 @@ const {
     viewRequests,
     respondToRequest,
 } = require("../controllers/inviteController");
-const { checkUser } = require("../middlewares/checkUserMiddleware");
+const { checkUser } = require("../middlewares/authMiddleware");
 
 // Send a request (invite)
 router.post("/send-request", checkUser, sendInvite);

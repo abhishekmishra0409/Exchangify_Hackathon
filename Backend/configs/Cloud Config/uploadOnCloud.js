@@ -1,4 +1,4 @@
-const cloudinary = require('./cloudConnection');
+const cloudinary = require('../../database/cloudConnection');
 const path = require('path');
 
 // Function to upload an image to Cloudinary
