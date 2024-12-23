@@ -1,6 +1,9 @@
 const Invite = require("../models/inivitationModel");
 const Team = require("../models/teamModel");
 const Request = require("../models/requestModel");
+const Collab = require("../models/collabModel");
+const { sendEmail } = require("../configs/nodemailerConfig");
+const { collaborationInviteTemplate } = require("../configs/EmailTemplates/collaborationInviteTemplate");
 
 // Send Invite (Request)
 exports.sendInvite = async (req, res) => {
@@ -31,6 +34,33 @@ exports.sendInvite = async (req, res) => {
         const request = await Request.create({
             userId: receiverId,
             invitationId: invite._id,
+        });
+
+        const team = await Team.findById(teamId);
+        const collab = await Collab.findById(collabId);
+        const receiver = await User.findById(receiverId);
+
+        //preparing email data to send 
+        const emailData = {
+            sender: {
+                name: req.user.name,
+                email: req.user.email
+            },
+            team: {
+                name: team.name,
+                memberCount: team.members.length
+            },
+            collab: {
+                title: collab.title
+            },
+            message: message || 'No additional message provided.',
+            responseUrl: `${process.env.FRONTEND_URL}/requests/${request._id}`
+        };
+
+        await sendEmail({
+            email: receiver.email,
+            subject: `New Collaboration Invitation from ${req.user.name}`,
+            html: collaborationInviteTemplate(emailData)
         });
 
         res.status(201).json({
