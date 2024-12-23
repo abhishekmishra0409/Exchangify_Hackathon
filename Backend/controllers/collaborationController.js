@@ -7,6 +7,8 @@ const collabController = {
     // Create a new collaboration
     createCollab: async (req, res) => {
         try {
+            const user = req.user.id
+
             const { name, description, requirements, tags } = req.body;
 
             // Validate required fields
@@ -20,7 +22,7 @@ const collabController = {
                 description,
                 requirements,
                 tags,
-                createdBy: req.user._id, // Assuming `req.user` contains the authenticated user
+                createdBy: user,
             });
 
             res.status(201).json({ message: "Collab created successfully.", collab: newCollab });

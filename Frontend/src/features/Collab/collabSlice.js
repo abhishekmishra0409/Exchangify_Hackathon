@@ -1,41 +1,100 @@
-// Add to imports at the top
-import { createCollaboration } from "./postService";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import collabService from './collabService';
 
-// Add new async thunk
-export const createCollaborationAsync = createAsyncThunk(
-    "posts/createCollaboration",
-    async ({ collab, collaborationData }, { rejectWithValue }) => {
+const initialState = {
+    collabs: [],
+    teams: [],
+    isLoading: false,
+    isError: false,
+    message: '',
+};
+
+// Thunk to create a new collab
+export const createCollab = createAsyncThunk(
+    'collab/createCollab',
+    async (collabData, thunkAPI) => {
         try {
-            return await createCollaboration(postId, collaborationData);
+            return await collabService.createCollab(collabData);
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
 
-// In the postSlice definition, add to extraReducers
-const postSlice = createSlice({
-    // ... existing slice configuration ...
-    extraReducers: (builder) => {
-        // ... existing reducers ...
+// Thunk to fetch user's collabs
+export const getMyCollabs = createAsyncThunk(
+    'collab/getMyCollabs',
+    async (_, thunkAPI) => {
+        try {
+            return await collabService.getMyCollabs();
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+        }
+    }
+);
 
-        // Add collaboration
-        builder.addCase(createCollaborationAsync.pending, (state) => {
-            state.loading = true;
-            state.error = null;
-        });
-        builder.addCase(createCollaborationAsync.fulfilled, (state, action) => {
-            state.loading = false;
-            const { postId } = action.meta.arg;
-            state.posts = state.posts.map((post) =>
-                post._id === postId
-                    ? { ...post, collaborations: [...(post.collaborations || []), action.payload.data] }
-                    : post
-            );
-        });
-        builder.addCase(createCollaborationAsync.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.payload;
-        });
+// Thunk to create a new team
+export const createTeam = createAsyncThunk(
+    'collab/createTeam',
+    async (teamData, thunkAPI) => {
+        try {
+
+            return await collabService.createTeam(teamData);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+        }
+    }
+);
+
+// Thunk to fetch teams for a specific collab
+export const getTeamsByCollab = createAsyncThunk(
+    'collab/getTeamsByCollab',
+    async (collabId, thunkAPI) => {
+        try {
+            return await collabService.getTeamsByCollab(collabId);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+        }
+    }
+);
+
+const collabSlice = createSlice({
+    name: 'collab',
+    initialState,
+    reducers: {
+        reset: (state) => {
+            state.collabs = [];
+            state.teams = [];
+            state.isLoading = false;
+            state.isError = false;
+            state.message = '';
+        },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(createCollab.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(createCollab.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.collabs.push(action.payload);
+            })
+            .addCase(createCollab.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(getMyCollabs.fulfilled, (state, action) => {
+                state.collabs = action.payload;
+            })
+            .addCase(createTeam.fulfilled, (state, action) => {
+                state.teams.push(action.payload);
+            })
+            .addCase(getTeamsByCollab.fulfilled, (state, action) => {
+                state.teams = action.payload;
+            });
     },
 });
+
+export const { reset } = collabSlice.actions;
+export default collabSlice.reducer;

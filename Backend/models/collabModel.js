@@ -10,10 +10,10 @@ const CollabSchema = new mongoose.Schema({
         required: true,
     },
     requirements: {
-        type: [String], // Array of required skills
+        type: [String],
     },
     tags: {
-        type: [String], // Tags for filtering
+        type: [String],
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
