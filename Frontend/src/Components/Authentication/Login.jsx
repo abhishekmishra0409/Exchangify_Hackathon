@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { login } from '../../features/User/userSlice';
+import {useNavigate} from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
@@ -24,7 +27,7 @@ const Login = () => {
       // Dispatch login action
       const result = await dispatch(login(formData)).unwrap();
       toast.success(result.message || 'Login successful');
-
+      navigate("/dashboard")
       // Clear form data
       setFormData({
         email: '',

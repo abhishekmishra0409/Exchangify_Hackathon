@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 function Header() {
     // Check if there is a token in session storage
-    const token = sessionStorage.getItem('token');
-    console.log(token);
+    const token = localStorage.getItem('token');
+    // console.log(token);
 
     return (
         <>
