@@ -1,166 +1,117 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserPosts } from '../features/Post/postSlice';
 
 const Profile = () => {
+    const dispatch = useDispatch();
+    const { userPosts, loading, error } = useSelector((state) => state.posts);
+
+    useEffect(() => {
+        dispatch(fetchUserPosts());
+    }, [dispatch]);
+
     return (
-        <div style={styles.container}>
+        <div className="bg-gradient-to-r from-[#CDF1FF] to-[#ECE9FF] p-5 rounded-lg">
             <h2 className="text-center font-bold text-xl">Your Profile</h2>
-            <div style={styles.profileCard}>
-                <div
-                    style={styles.leftPanel}
-                    className="flex flex-col items-center justify-center"
-                >
+            
+            {/* Profile Card */}
+            <div className="bg-white rounded-lg shadow-md p-5 mt-5 flex flex-wrap">
+                {/* Left Panel */}
+                <div className="flex-1 text-center border-r border-gray-200 p-5 flex flex-col items-center justify-center">
                     <img
                         src="https://via.placeholder.com/150"
                         alt="Student"
-                        style={styles.image}
+                        className="w-[150px] h-[150px] rounded-full object-cover mb-3"
                     />
-                    <h3 style={styles.studentName}>Ishmam Ahasan Samin</h3>
-                    <p>Web Developer</p>
+                    <h3 className="text-lg font-bold">Ishmam Ahasan Samin</h3>
+                    <p className="text-gray-600">Web Developer</p>
                 </div>
-                <div style={styles.rightPanel}>
-                    <div style={styles.infoSection}>
-                        <h3 style={styles.sectionTitle}>General Information</h3>
-                        <table style={styles.infoTable}>
+
+                {/* Right Panel */}
+                <div className="flex-[2] p-5">
+                    {/* General Information */}
+                    <div className="mb-5">
+                        <h3 className="text-lg font-bold mb-3">General Information</h3>
+                        <table className="w-full">
                             <tbody>
-                            <tr>
-                                <td>Phone</td>
-                                <td>: 125</td>
-                            </tr>
-                            <tr>
-                                <td>Email</td>
-                                <td>: 2020</td>
-                            </tr>
-                            <tr>
-                                <td>Skills</td>
-                                <td>: Male</td>
-                            </tr>
+                                <tr className="border-b border-gray-100">
+                                    <td className="py-2">Phone</td>
+                                    <td className="py-2">: 125</td>
+                                </tr>
+                                <tr className="border-b border-gray-100">
+                                    <td className="py-2">Email</td>
+                                    <td className="py-2">: 2020</td>
+                                </tr>
+                                <tr className="border-b border-gray-100">
+                                    <td className="py-2">Skills</td>
+                                    <td className="py-2">: Male</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div style={styles.infoSection}>
-                        <h3 style={styles.sectionTitle}>Other Information</h3>
-                        <p>
+
+                    {/* Other Information */}
+                    <div>
+                        <h3 className="text-lg font-bold mb-3">Other Information</h3>
+                        <p className="text-gray-600">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                            enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                            nisi ut aliquip ex ea commodo consequat.
+                            eiusmod tempor incididunt ut labore et dolore magna aliqua.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div>
-                <h2
-                    style={styles.sectionTitle}
-                    className="mt-10 text-2xl font-bold"
-                >
-                    Your Posts
-                </h2>
-                <div
-                    style={styles.postsGrid}
-                    className="flex flex-wrap gap-4"
-                >
-                    {[1, 2, 3, 4].map((post, index) => (
-                        <div
-                            key={index}
-                            style={styles.postCard}
-                            className="flex flex-col items-center justify-center pt-4"
+            {/* Posts Section */}
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold mb-5">Your Posts</h2>
+                
+                {loading && (
+                    <div className="text-center py-4">
+                        <p className="text-gray-600">Loading posts...</p>
+                    </div>
+                )}
+
+                {error && (
+                    <div className="text-center py-4">
+                        <p className="text-red-500">{error}</p>
+                    </div>
+                )}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {userPosts.map((post) => (
+                        <div 
+                            key={post._id} 
+                            className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer overflow-hidden"
                         >
                             <img
-                                src="https://via.placeholder.com/300x200"
-                                alt={`Post ${index + 1}`}
-                                style={styles.postImage}
+                                src={post.imageUrl}
+                                alt={post.title}
+                                className="w-full h-[200px] object-cover"
                             />
-                            <div
-                                style={styles.postContent}
-                                className="p-4"
-                            >
-                                <h3
-                                    style={styles.postTitle}
-                                    className="text-lg font-semibold"
-                                >
-                                    Post Title {index + 1}
+                            <div className="p-4">
+                                <h3 className="text-lg font-semibold mb-2">
+                                    {post.title}
                                 </h3>
-                                <p
-                                    style={styles.postDescription}
-                                    className="text-sm text-gray-500"
-                                >
-                                    Short description of the post content goes here...
+                                <p className="text-sm text-gray-500 mb-2">
+                                    {post.content.substring(0, 100)}...
                                 </p>
-                                <span
-                                    style={styles.postDate}
-                                    className="text-xs text-gray-500"
-                                >
-                                    Posted on: 01/01/2024
+                                <span className="text-xs text-gray-500">
+                                    Posted on: {new Date(post.createdAt).toLocaleDateString()}
                                 </span>
                             </div>
                         </div>
                     ))}
                 </div>
+
+                {/* Show when no posts are available */}
+                {!loading && !error && userPosts.length === 0 && (
+                    <div className="text-center py-4">
+                        <p className="text-gray-600">No posts found.</p>
+                    </div>
+                )}
             </div>
         </div>
     );
-};
-
-const styles = {
-    container: {
-        fontFamily: 'Arial, sans-serif',
-        background: 'linear-gradient(to right, #CDF1FF, #ECE9FF)',
-        padding: '20px',
-        borderRadius: '10px',
-        margin: 'auto',
-    },
-    profileCard: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        backgroundColor: '#fff',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        padding: '20px',
-        marginTop: '20px',
-    },
-    leftPanel: {
-        flex: '1',
-        textAlign: 'center',
-        borderRight: '1px solid #eee',
-        padding: '20px',
-    },
-    rightPanel: {
-        flex: '2',
-        padding: '20px',
-    },
-    image: {
-        width: '150px',
-        height: '150px',
-        borderRadius: '50%',
-        objectFit: 'cover',
-        marginBottom: '10px',
-    },
-    studentName: {
-        fontSize: '18px',
-        fontWeight: 'bold',
-    },
-    infoSection: {
-        marginBottom: '20px',
-    },
-    sectionTitle: {
-        fontSize: '16px',
-        fontWeight: 'bold',
-        marginBottom: '10px',
-    },
-    infoTable: {
-        width: '100%',
-        borderCollapse: 'collapse',
-    },
-    postCard: {
-        backgroundColor: '#fff',
-        borderRadius: '5px',
-        border: '1px solid #e0e0e0',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        overflow: 'hidden',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer',
-    },
 };
 
 export default Profile;

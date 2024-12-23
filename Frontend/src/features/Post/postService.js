@@ -5,7 +5,7 @@ import {config}  from "../../utils/axiosConfig.js";
 
 // Create a new post
 export const createPost = async (postData) => {
-    const response = await axios.post(`${base_url}/create`, postData, config);
+    const response = await axios.post(`${base_url}posts`, postData, config);
     return response.data;
 };
 
@@ -17,7 +17,7 @@ export const getPostsBySkills = async () => {
 
 // Get user posts
 export const getUserPosts = async () => {
-    const response = await axios.get(`${base_url}/user`,config);
+    const response = await axios.get(`${base_url}posts/user`,config);
     return response.data;
 };
 

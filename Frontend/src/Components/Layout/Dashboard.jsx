@@ -50,7 +50,7 @@ const Dashboard = () => {
                         {[
                             { name: "Home", route: "/dashboard" },
                             { name: "Collaboration", route: "/dashboard/collaboration" },
-                            { name: "Mentorship", route: "/dashboard/mentorship" },
+                            { name: "Create Post", route: "/dashboard/create-post" },
                             { name: "Expertise Exchange", route: "/dashboard/expertise-exchange" },
                             { name: "Settings", route: "/dashboard/settings" },
                         ].map((item, index) => (

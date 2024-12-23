@@ -9,10 +9,11 @@ import ProtectedRoute from './utils/ProtectedRoute.jsx';
 import { ToastContainer } from 'react-toastify';
 import Home from "./Pages/Home.jsx";
 import Collaboration from "./Pages/Collaboration.jsx";
-import Mentorship from "./Pages/Mentorship.jsx";
 import ExpertiseExchange from "./Pages/ExpertiseExchange.jsx";
 import Settings from "./Pages/Settings.jsx";
 import Profile from "./Pages/Profile.jsx";
+import CreateProposal from './Pages/CreateProposal.jsx';
+import CreatePost from './Pages/CreatePost.jsx';
 
 function App() {
     return (
@@ -36,7 +37,8 @@ function App() {
                         <Route index element={<Home />} />
                         <Route path="profile" element={<Profile />} />
                         <Route path="collaboration" element={<Collaboration />} />
-                        <Route path="mentorship" element={<Mentorship />} />
+                        <Route path='create-proposal' element={<CreateProposal />} />   
+                        <Route path="create-post" element={<CreatePost />} />
                         <Route path="expertise-exchange" element={<ExpertiseExchange />} />
                         <Route path="settings" element={<Settings />} />
                     </Route>
