@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
                     "uiux",
                     "software_developer",
                     "graphic_designer",
-                    "copywriting",
+                    "copywriting", 
                     "web_development",
                     "application_development",
                     "data_science",

@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import authService from '../../features/signupService';
+import {toast} from 'react-toastify';
+
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,9 +15,13 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission here
+
+    const response = await authService.loginService(formData);
+    console.log(response);
+    toast.success('User Login successfull');
     console.log(formData);
   };
 

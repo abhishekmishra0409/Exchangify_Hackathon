@@ -26,7 +26,14 @@ mongo.connection;
 const cloudinary = require('./database/cloudConnection');
 
 // Middlewares
-app.use(cors());
+const corsOptions = {
+    origin: 'http://localhost:5173', // Allow only your frontend origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+    credentials: true, // Allow cookies and credentials
+  };
+  
+  app.use(cors(corsOptions));
+  
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
