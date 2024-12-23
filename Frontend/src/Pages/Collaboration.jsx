@@ -30,7 +30,7 @@ const Collaboration = () => {
                                 Accept and reject collab requests as per your requirements
                             </li>
                         </ul>
-                        <Link to="/create-proposal">
+                        <Link to="/dashboard/create-proposal">
                             <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition-colors duration-200">
                                 Create Your Proposal 🚀
                             </button>
