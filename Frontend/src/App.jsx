@@ -15,6 +15,7 @@ import Profile from "./Pages/Profile.jsx";
 import CreateProposal from './Pages/CreateProposal.jsx';
 import CreatePost from './Pages/CreatePost.jsx';
 import TeamDetail from "./Pages/TeamDetail.jsx";
+import UpdateDetails from "./Pages/UpdateDetails.jsx";
 
 function App() {
     return (
@@ -42,7 +43,7 @@ function App() {
                         <Route path='create-proposal' element={<CreateProposal />} />
                         <Route path="create-post" element={<CreatePost />} />
                         <Route path="expertise-exchange" element={<ExpertiseExchange />} />
-                        <Route path="settings" element={<Settings />} />
+                        <Route path="update-details" element={<UpdateDetails />} />
                     </Route>
                 </Routes>
 

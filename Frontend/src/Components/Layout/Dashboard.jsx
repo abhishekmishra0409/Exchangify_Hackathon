@@ -52,7 +52,7 @@ const Dashboard = () => {
                             { name: "Collaboration", route: "/dashboard/collaboration" },
                             { name: "Create Post", route: "/dashboard/create-post" },
                             { name: "Expertise Exchange", route: "/dashboard/expertise-exchange" },
-                            { name: "Settings", route: "/dashboard/settings" },
+                            { name: "Update Details", route: "/dashboard/update-details" },
                         ].map((item, index) => (
                             <NavLink
                                 key={index}

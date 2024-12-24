@@ -63,6 +63,14 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minlength: 6,
     },
+    linkedin: {
+        type: String,
+        default: "",
+    },
+    github: {
+        type: String,
+        default: "",
+    }
 });
 
 // Encrypting password before saving it to the database
