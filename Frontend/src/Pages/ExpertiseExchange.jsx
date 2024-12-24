@@ -1,198 +1,291 @@
-// import React, { useState, useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { Tabs, Tab, Button, Container, Card } from '@mui/material';
-// import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-// // import { fetchSentRequests, fetchReceivedRequests } from '../features/exchange/exchangeSlice';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUsersBySkills } from "../features/User/userSlice";
+import { createExchange } from "../features/Exchange/exchangeSlice";
 
 const ExpertiseExchange = () => {
-//     const [activeTab, setActiveTab] = useState(0);
-//     const navigate = useNavigate();
-//     const dispatch = useDispatch();
-    
-//     // const { sentRequests, receivedRequests, loading } = useSelector(
-//         // (state) => state.exchange
-//     // );
-// // 
-//     // useEffect(() => {
-//     //     dispatch(fetchSentRequests());
-//     //     dispatch(fetchReceivedRequests());
-//     // }, [dispatch]);
+    const dispatch = useDispatch();
 
-//     const handleTabChange = (event, newValue) => {
-//         setActiveTab(newValue);
-//     };
+    const [selectedSkill, setSelectedSkill] = useState("");
+    const [showExchangeModal, setShowExchangeModal] = useState(false);
+    const [exchangeMessage, setExchangeMessage] = useState("Let's exchange our expertise!");
+    const [exchangeUserId, setExchangeUserId] = useState(null);
+    const [exchangeDetails, setExchangeDetails] = useState({
+        exchangeType: "skill",
+        requesterSkills: [],
+        responderSkills: [],
+        monetaryExchange: 0,
+        projectExchange: "",
+    });
 
-//     const handleCreateExchange = () => {
-//         navigate('/create-exchange');
-//     };
+    // Fetch users from Redux
+    const { users, isLoading: isUsersLoading, isError: isUsersError, message: usersMessage } = useSelector(
+        (state) => state.user
+    );
 
-//     return (
-//         <Container maxWidth="lg" sx={{ py: 4 }}>
-//             {/* Section 1: How Exchange Works */}
-//             <Card sx={{ mb: 4, p: 3 }}>
-//                 <div className="exchange-info">
-//                     <div className="exchange-header" style={{ 
-//                         display: 'flex', 
-//                         justifyContent: 'space-between',
-//                         alignItems: 'center',
-//                         marginBottom: '20px'
-//                     }}>
-//                         <h1>Skill Exchange Platform</h1>
-//                         <Button 
-//                             variant="contained" 
-//                             color="primary"
-//                             startIcon={<SwapHorizIcon />}
-//                             onClick={handleCreateExchange}
-//                         >
-//                             Create Exchange Proposal
-//                         </Button>
-//                     </div>
+    // Handle input changes for the exchange form
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (name === "exchangeType") {
+            // Ensure the exchangeType is one of the valid enum values ('skill', 'money', 'project')
+            setExchangeDetails((prev) => ({ ...prev, exchangeType: value }));
+        } else {
+            setExchangeDetails((prev) => ({ ...prev, [name]: value }));
+        }
+    };
 
-//                     <div className="exchange-steps" style={{ 
-//                         display: 'grid',
-//                         gridTemplateColumns: 'repeat(3, 1fr)',
-//                         gap: '20px',
-//                         marginTop: '20px'
-//                     }}>
-//                         <div className="step">
-//                             <h3>1. Create Proposal</h3>
-//                             <p>Define the skills you can offer and the skills you want to learn. 
-//                                Specify your availability and preferred learning style.</p>
-//                         </div>
-//                         <div className="step">
-//                             <h3>2. Match & Connect</h3>
-//                             <p>Find users with complementary skills. Send and receive exchange 
-//                                proposals to establish learning partnerships.</p>
-//                         </div>
-//                         <div className="step">
-//                             <h3>3. Start Learning</h3>
-//                             <p>Begin your skill exchange journey. Schedule sessions, track 
-//                                progress, and provide feedback.</p>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </Card>
 
-//             {/* Section 2: Requests Tabs */}
-//             <Card sx={{ mt: 4 }}>
-//                 <Tabs 
-//                     value={activeTab} 
-//                     onChange={handleTabChange}
-//                     sx={{ borderBottom: 1, borderColor: 'divider' }}
-//                 >
-//                     <Tab label="Received Requests" />
-//                     <Tab label="Sent Requests" />
-//                 </Tabs>
+    // Handle skill selection
+    const handleSkillChange = (e) => {
+        const { name, options } = e.target;
+        const selectedValues = Array.from(options)
+            .filter((option) => option.selected)
+            .map((option) => option.value);
+        setExchangeDetails((prev) => ({ ...prev, [name]: selectedValues }));
+    };
 
-//                 {/* Received Requests Tab */}
-//                 <TabPanel value={activeTab} index={0}>
-//                     {loading ? (
-//                         <div>Loading...</div>
-//                     ) : receivedRequests?.length > 0 ? (
-//                         <div className="requests-grid" style={{
-//                             display: 'grid',
-//                             gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-//                             gap: '20px',
-//                             padding: '20px'
-//                         }}>
-//                             {receivedRequests.map((request) => (
-//                                 <RequestCard 
-//                                     key={request._id}
-//                                     request={request}
-//                                     type="received"
-//                                 />
-//                             ))}
-//                         </div>
-//                     ) : (
-//                         <div style={{ padding: '20px', textAlign: 'center' }}>
-//                             No received requests yet
-//                         </div>
-//                     )}
-//                 </TabPanel>
+    // Fetch users when skill is selected
+    useEffect(() => {
+        if (selectedSkill) {
+            dispatch(getUsersBySkills(selectedSkill));
+        }
+    }, [dispatch, selectedSkill]);
 
-//                 {/* Sent Requests Tab */}
-//                 <TabPanel value={activeTab} index={1}>
-//                     {loading ? (
-//                         <div>Loading...</div>
-//                     ) : sentRequests?.length > 0 ? (
-//                         <div className="requests-grid" style={{
-//                             display: 'grid',
-//                             gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-//                             gap: '20px',
-//                             padding: '20px'
-//                         }}>
-//                             {sentRequests.map((request) => (
-//                                 <RequestCard 
-//                                     key={request._id}
-//                                     request={request}
-//                                     type="sent"
-//                                 />
-//                             ))}
-//                         </div>
-//                     ) : (
-//                         <div style={{ padding: '20px', textAlign: 'center' }}>
-//                             No sent requests yet
-//                         </div>
-//                     )}
-//                 </TabPanel>
-//             </Card>
-//         </Container>
-//     );
-// };
+    const openExchangeModal = (userId) => {
+        setExchangeUserId(userId);
+        setShowExchangeModal(true);
+    };
 
-// // TabPanel component
-// const TabPanel = ({ children, value, index }) => {
-//     return (
-//         <div role="tabpanel" hidden={value !== index}>
-//             {value === index && children}
-//         </div>
-//     );
-// };
+    const closeExchangeModal = () => {
+        setShowExchangeModal(false);
+        setExchangeMessage("Let's exchange our expertise!");
+        setExchangeUserId(null);
+        setExchangeDetails({
+            exchangeType: "skills",
+            requesterSkills: [],
+            responderSkills: [],
+            monetaryExchange: 0,
+            projectExchange: "",
+        });
+    };
 
-// // RequestCard component
-// const RequestCard = ({ request, type }) => {
-//     const dispatch = useDispatch();
+    const sendExchangeRequest = () => {
+        const exchangePayload = {
+            responder: exchangeUserId,
+            exchangeType: exchangeDetails.exchangeType,
+            requesterSkills: exchangeDetails.requesterSkills,
+            responderSkills: exchangeDetails.responderSkills,
+            monetaryExchange: exchangeDetails.monetaryExchange,
+            projectExchange: exchangeDetails.projectExchange,
+        };
+        console.log(exchangePayload)
 
-//     const handleAccept = () => {
-//         dispatch(acceptExchangeRequest(request._id));
-//     };
+        dispatch(createExchange(exchangePayload)).then(() => {
+            alert(`Exchange request sent successfully to user ID: ${exchangeUserId}`);
+            closeExchangeModal();
+        });
+    };
 
-//     const handleReject = () => {
-//         dispatch(rejectExchangeRequest(request._id));
-//     };
+    return (
+        <div className="min-h-screen bg-gray-100 p-6">
+            <div className="bg-white rounded-lg shadow-md p-6">
+                <h1 className="text-2xl font-bold mb-4">Expertise Exchange</h1>
 
-//     return (
-//         <Card sx={{ p: 2 }}>
-//             <div style={{ marginBottom: '10px' }}>
-//                 <h3>{type === 'received' ? 'From:' : 'To:'} {request.user.name}</h3>
-//                 <p><strong>Skills Offered:</strong> {request.skillsOffered.join(', ')}</p>
-//                 <p><strong>Skills Requested:</strong> {request.skillsRequested.join(', ')}</p>
-//                 <p><strong>Status:</strong> {request.status}</p>
-//             </div>
-            
-//             {type === 'received' && request.status === 'pending' && (
-//                 <div style={{ display: 'flex', gap: '10px' }}>
-//                     <Button 
-//                         variant="contained" 
-//                         color="primary" 
-//                         size="small"
-//                         onClick={handleAccept}
-//                     >
-//                         Accept
-//                     </Button>
-//                     <Button 
-//                         variant="outlined" 
-//                         color="error" 
-//                         size="small"
-//                         onClick={handleReject}
-//                     >
-//                         Reject
-//                     </Button>
-//                 </div>
-//             )}
-//         </Card>
-//     );
+                {/* Service (Skill) Selection */}
+                <div className="mt-6">
+                    <label htmlFor="skill-select" className="block font-bold mb-2">
+                        Select a service to exchange:
+                    </label>
+                    <select
+                        id="skill-select"
+                        value={selectedSkill}
+                        onChange={(e) => setSelectedSkill(e.target.value)}
+                        className="border rounded-md p-2 w-full"
+                    >
+                        <option value="">-- Select a Service --</option>
+                        {[
+                            "uiux",
+                            "software_developer",
+                            "graphic_designer",
+                            "copywriting",
+                            "web_development",
+                            "application_development",
+                            "data_science",
+                            "machine_learning",
+                            "blockchain",
+                            "cloud_computing",
+                            "video_editing",
+                            "animation",
+                            "content_writing",
+                            "socialmedia_management",
+                            "seo_expert",
+                        ].map((skill) => (
+                            <option key={skill} value={skill}>
+                                {skill.replace("_", " ").toUpperCase()}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* Users Display */}
+                <h2 className="text-xl font-bold mt-6">
+                    Users offering: {selectedSkill ? selectedSkill.replace("_", " ") : "None"} (
+                    {users?.length || 0})
+                </h2>
+                {isUsersLoading ? (
+                    <p>Loading users...</p>
+                ) : isUsersError ? (
+                    <p className="text-red-500">Error: {usersMessage}</p>
+                ) : users?.length > 0 ? (
+                    <ul className="list-disc list-inside">
+                        {users.map((user) => (
+                            <li key={user._id} className="flex justify-between items-center">
+                                <span>
+                                    {user.name} ({user.skills.join(", ")})
+                                </span>
+                                <button
+                                    onClick={() => openExchangeModal(user._id)}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                >
+                                    Exchange
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No users found for the selected service.</p>
+                )}
+
+                {/* Exchange Modal */}
+                {showExchangeModal && (
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-white p-6 rounded-lg shadow-md w-96">
+                            <h2 className="text-xl font-bold mb-4">Create Exchange Request</h2>
+                            <form>
+                                <label className="block font-bold mb-2">Exchange Type:</label>
+                                <select
+                                    name="exchangeType"
+                                    value={exchangeDetails.exchangeType}
+                                    onChange={handleInputChange}
+                                    className="w-full border rounded-md p-2 mb-4"
+                                >
+                                    <option value="skill">Skills</option>
+                                    <option value="money">Monetary</option>
+                                    <option value="project">Project</option>
+                                </select>
+
+
+                                <label className="block font-bold mb-2">Your Skills:</label>
+                                <select
+                                    name="requesterSkills"
+                                    multiple
+                                    value={exchangeDetails.requesterSkills}
+                                    onChange={handleSkillChange}
+                                    className="w-full border rounded-md p-2 mb-4"
+                                >
+                                    {[
+                                        "uiux",
+                                        "software_developer",
+                                        "graphic_designer",
+                                        "copywriting",
+                                        "web_development",
+                                        "application_development",
+                                        "data_science",
+                                        "machine_learning",
+                                        "blockchain",
+                                        "cloud_computing",
+                                        "video_editing",
+                                        "animation",
+                                        "content_writing",
+                                        "socialmedia_management",
+                                        "seo_expert",
+                                    ].map((skill) => (
+                                        <option key={skill} value={skill}>
+                                            {skill.replace("_", " ").toUpperCase()}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <label className="block font-bold mb-2">Responder's Skills:</label>
+                                <select
+                                    name="responderSkills"
+                                    multiple
+                                    value={exchangeDetails.responderSkills}
+                                    onChange={handleSkillChange}
+                                    className="w-full border rounded-md p-2 mb-4"
+                                >
+                                    {[
+                                        "uiux",
+                                        "software_developer",
+                                        "graphic_designer",
+                                        "copywriting",
+                                        "web_development",
+                                        "application_development",
+                                        "data_science",
+                                        "machine_learning",
+                                        "blockchain",
+                                        "cloud_computing",
+                                        "video_editing",
+                                        "animation",
+                                        "content_writing",
+                                        "socialmedia_management",
+                                        "seo_expert",
+                                    ].map((skill) => (
+                                        <option key={skill} value={skill}>
+                                            {skill.replace("_", " ").toUpperCase()}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                {exchangeDetails.exchangeType === "monetary" && (
+                                    <>
+                                        <label className="block font-bold mb-2">Monetary Value:</label>
+                                        <input
+                                            type="number"
+                                            name="monetaryExchange"
+                                            value={exchangeDetails.monetaryExchange}
+                                            onChange={handleInputChange}
+                                            className="w-full border rounded-md p-2 mb-4"
+                                        />
+                                    </>
+                                )}
+
+                                {exchangeDetails.exchangeType === "project" && (
+                                    <>
+                                        <label className="block font-bold mb-2">Project Details:</label>
+                                        <textarea
+                                            name="projectExchange"
+                                            value={exchangeDetails.projectExchange}
+                                            onChange={handleInputChange}
+                                            rows="4"
+                                            className="w-full border rounded-md p-2 mb-4"
+                                        ></textarea>
+                                    </>
+                                )}
+
+                                <div className="flex justify-end mt-4">
+                                    <button
+                                        type="button"
+                                        onClick={closeExchangeModal}
+                                        className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mr-2"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={sendExchangeRequest}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default ExpertiseExchange;

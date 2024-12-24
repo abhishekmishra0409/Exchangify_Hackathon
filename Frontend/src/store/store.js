@@ -3,6 +3,8 @@
       import postReducer from '../features/Post/postSlice.js';
       import collabReducer from '../features/Collab/collabSlice.js';
       import inviteReducer from '../features/Invite/inviteSlice.js';
+      import exchangesReducer from '../features/Exchange/exchangeSlice.js';
+
 
 
       export const store = configureStore({
@@ -10,7 +12,8 @@
           user: userReducer,
             posts: postReducer,
             collab: collabReducer,
-            invite: inviteReducer
+            invite: inviteReducer,
+            exchanges: exchangesReducer
 
         },
       });

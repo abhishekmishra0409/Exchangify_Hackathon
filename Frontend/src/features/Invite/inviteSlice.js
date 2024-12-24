@@ -62,7 +62,7 @@ const inviteSlice = createSlice({
     initialState: {
         invites: [],
         requests: [],
-        teamInvites: [], // Add this field to store invites by team ID
+        teamInvites: [],
         isLoading: false,
         isSuccess: false,
         isError: false,
