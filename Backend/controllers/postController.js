@@ -48,15 +48,10 @@ exports.getPosts = async (req, res) => {
     try {
         const userSkills = req.user.skills;
         // console.log(userSkills)
-        if (!userSkills || userSkills.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: "User skills not found. Update your profile to include skills.",
-            });
-        }
+
 
         // Fetch posts that match any of the user's skills
-        const posts = await Post.find({ skills: { $in: userSkills } })
+        const posts = await Post.find()
             .populate("user", "name profileImg") // Populate user details (name and profile image)
             .sort({ createdAt: -1 }); // Sort by newest posts first
 

@@ -52,7 +52,7 @@ function Home() {
                             <img
                                 src={post.user.profileImg}
                                 alt={post.user.name}
-                                className="w-12 h-12 rounded-full mr-4"
+                                className="w-12 h-12 rounded-full mr-4 bg-cover bg-no-repeat"
                             />
                             <div>
                                 <p className="font-semibold">{post.user.name}</p>

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserRequests, handleExchangeRequest } from "../features/Exchange/exchangeSlice.js";
 import { getRequests, respondToRequest } from "../features/Invite/inviteSlice.js";
 
-function RequestCard({ title, description, type, onAccept, onDecline }) {
+function RequestCard({ title, message, type, onAccept, onDecline }) {
     const typeStyles = {
         collab: "bg-blue-100 text-blue-700 border-blue-500",
         service: "bg-green-100 text-green-700 border-green-500",
@@ -16,7 +16,7 @@ function RequestCard({ title, description, type, onAccept, onDecline }) {
             }`}
         >
             <h3 className="text-xl font-semibold">{title}</h3>
-            <p className="mt-2 text-sm">{description}</p>
+            <p className="mt-2 text-sm">{message}</p>
             <div className="flex justify-between mt-4">
                 <button
                     onClick={onAccept}
@@ -106,6 +106,9 @@ function Requests() {
     const filteredCollabRequests = collabRequests?.filter(request => request.status !== "accepted");
     const filteredServiceRequests = serviceRequests?.filter(request => request.status !== "accepted");
 
+    console.log(filteredServiceRequests)
+    console.log(filteredCollabRequests)
+
     if (isLoading) {
         return <div className="text-center mt-6">Loading...</div>;
     }
@@ -123,8 +126,8 @@ function Requests() {
                 {filteredCollabRequests?.map((request) => (
                     <RequestCard
                         key={request._id}
-                        title={request.title || "Collab Request"}
-                        description={request.description || "No description"}
+                        title={request.invitationId.collab.name || "Collab Request"}
+                        message={request.invitationId.message || "No description"}
                         type="collab"
                         onAccept={() => handleAccept(request._id, "collab")}
                         onDecline={() => handleDecline(request._id, "collab")}
@@ -133,12 +136,13 @@ function Requests() {
                 {filteredServiceRequests?.map((request) => (
                     <RequestCard
                         key={request._id}
-                        title={request.title || "Service Exchange Request"}
-                        description={request.description || "No description"}
+                        title={request.requesterSkills?.join(", ") || "Service Exchange Request"}
+                        message={`Requested Exchange Type: ${request.exchangeType}, Skills: ${request.requesterSkills?.join(", ")}`}
                         type="service"
                         onAccept={() => handleAccept(request._id, "service")}
                         onDecline={() => handleDecline(request._id, "service")}
                     />
+
                 ))}
             </div>
         </div>
