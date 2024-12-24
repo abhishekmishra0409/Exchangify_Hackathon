@@ -63,10 +63,11 @@ const userService = {
       Object.entries(userData).forEach(([key, value]) => {
         if (value) formData.append(key, value);
       });
-
+      console.log(formData, "formData in service")
       const response = await axios.put(`${base_url}/update`, formData, {
         config,
       });
+      console.log(response.data, "response in service")
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Failed to update user details' };

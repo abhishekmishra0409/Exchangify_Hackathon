@@ -5,11 +5,12 @@ const Collab = require("../models/collabModel");
 const User = require("../models/userModel");
 const { sendEmail } = require("../configs/nodemailerConfig");
 const { collaborationInviteTemplate } = require("../configs/EmailTemplates/collaborationInviteTemplate");
+const userModel = require("../models/userModel");
 
 // Send Invite (Request)
 exports.sendInvite = async (req, res) => {
     const { receiverId, teamId, collabId, message } = req.body;
-
+    console.log("Working -- 1");
     try {
         const existingInvite = await Invite.findOne({
             sender: req.user._id,
@@ -18,11 +19,10 @@ exports.sendInvite = async (req, res) => {
             collab: collabId,
             status: "pending",
         });
-
         if (existingInvite) {
             return res.status(400).json({ message: "Invite already sent." });
         }
-
+        
         const invite = await Invite.create({
             sender: req.user._id,
             receiver: receiverId,
@@ -30,17 +30,20 @@ exports.sendInvite = async (req, res) => {
             collab: collabId,
             message,
         });
-
+        
+        console.log("Working -- 2", invite);
         // Create a request for the invite
         const request = await Request.create({
             userId: receiverId,
             invitationId: invite._id,
         });
 
+        
+        console.log("Working -- 3", request);
         const team = await Team.findById(teamId);
         const collab = await Collab.findById(collabId);
-        const receiver = await User.findById(receiverId);
-
+        const receiver = await userModel.findById(receiverId);
+        console.log("Working", team, collab, receiver);
         //preparing email data to send 
         const emailData = {
             sender: {
@@ -48,21 +51,25 @@ exports.sendInvite = async (req, res) => {
                 email: req.user.email
             },
             team: {
-                name: team.name,
+                name: team.teamName,
                 memberCount: team.members.length
             },
             collab: {
-                title: collab.title
+                title: collab.description
             },
-            message: message || 'No additional message provided.',
-            responseUrl: `${process.env.FRONTEND_URL}/requests/${request._id}`
-        };
+         };
+         console.log(receiver.email);
+        console.log("Working -- 4", emailData);
+        const info = await sendEmail(
+            receiver.email,
+            `New Collaboration Invitation from ${req.user.name}`,
+            collaborationInviteTemplate(emailData)
+        );
 
-        await sendEmail({
-            email: receiver.email,
-            subject: `New Collaboration Invitation from ${req.user.name}`,
-            html: collaborationInviteTemplate(emailData)
-        });
+        if(!info){
+             res.status(400).json({ message: "Failed to send email." });
+            console.log("Working -- 5", info);
+        }
 
         res.status(201).json({
             message: "Invite and request sent successfully.",
