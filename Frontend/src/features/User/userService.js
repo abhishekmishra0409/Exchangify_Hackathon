@@ -33,9 +33,9 @@ const userService = {
   // Get user details
   async getUserDetails() {
     try {
-      const response = await axios.get(`${base_url}auth/getUserDetails`, {
-        config,
-      });
+
+      const response = await axios.get(`${base_url}auth/getUserDetails`, config);
+      console.log(response.data)
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Failed to fetch user details' };

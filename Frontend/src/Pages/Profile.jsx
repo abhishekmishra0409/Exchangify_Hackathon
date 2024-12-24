@@ -1,14 +1,23 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserPosts } from '../features/Post/postSlice';
+import { getUserDetails } from '../features/User/userSlice';
+
 
 const Profile = () => {
     const dispatch = useDispatch();
     const { userPosts, loading, error } = useSelector((state) => state.posts);
-
+    const { user, isLoading, error: userDetailsError } = useSelector((state) => state.user);
+    
     useEffect(() => {
         dispatch(fetchUserPosts());
+        dispatch(getUserDetails());
+        
     }, [dispatch]);
+
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+    if (!user) return <div>No user data available</div>;
 
     return (
         <div className="bg-gradient-to-r from-[#CDF1FF] to-[#ECE9FF] p-5 rounded-lg">
@@ -19,12 +28,12 @@ const Profile = () => {
                 {/* Left Panel */}
                 <div className="flex-1 text-center border-r border-gray-200 p-5 flex flex-col items-center justify-center">
                     <img
-                        src="https://via.placeholder.com/150"
+                        src={`${user.profileImg}`}
                         alt="Student"
                         className="w-[150px] h-[150px] rounded-full object-cover mb-3"
                     />
-                    <h3 className="text-lg font-bold">Ishmam Ahasan Samin</h3>
-                    <p className="text-gray-600">Web Developer</p>
+                    <h3 className="text-lg font-bold">{user.name}</h3>
+                    <p className="text-gray-600">{user.skills[0]}</p>
                 </div>
 
                 {/* Right Panel */}
@@ -36,15 +45,15 @@ const Profile = () => {
                             <tbody>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2">Phone</td>
-                                    <td className="py-2">: 125</td>
+                                    <td className="py-2">: {user.phone}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2">Email</td>
-                                    <td className="py-2">: 2020</td>
+                                    <td className="py-2">: {user.email}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2">Skills</td>
-                                    <td className="py-2">: Male</td>
+                                    <td className="py-2">: {user.skills.join(', ')}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -52,10 +61,9 @@ const Profile = () => {
 
                     {/* Other Information */}
                     <div>
-                        <h3 className="text-lg font-bold mb-3">Other Information</h3>
+                        <h3 className="text-lg font-bold mb-3">Bio</h3>
                         <p className="text-gray-600">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            {user.bio}
                         </p>
                     </div>
                 </div>
