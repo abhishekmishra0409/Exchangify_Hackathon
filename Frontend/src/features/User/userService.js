@@ -42,6 +42,20 @@ const userService = {
     }
   },
 
+  // Get users by skills
+  async getUsersBySkills(skills) {
+    try {
+      const response = await axios.get(`${base_url}auth/skills`, {
+        params: { skills },
+        ...config,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch users by skills' };
+    }
+  },
+
+
   // Update user details
   async updateUserDetails(userData) {
     try {
@@ -59,5 +73,7 @@ const userService = {
     }
   },
 };
+
+
 
 export default userService;

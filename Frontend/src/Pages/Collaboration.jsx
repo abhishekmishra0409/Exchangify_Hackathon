@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { createCollab, createTeam, getTeamsByCollab, getMyCollabs } from '../features/Collab/collabSlice.js';
 
@@ -21,6 +22,7 @@ const tagsOptions = [
 
 const Collaboration = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { collabs, teams, isLoading, isError, message } = useSelector((state) => state.collab);
 
     const [collabData, setCollabData] = useState({
@@ -72,6 +74,10 @@ const Collaboration = () => {
         } catch (error) {
             console.error('Error fetching teams:', error);
         }
+    };
+
+    const handleTeamClick = (teamId) => {
+        navigate(`/dashboard/team/${teamId}`); // Navigate to the team detail page
     };
 
     return (
@@ -149,7 +155,11 @@ const Collaboration = () => {
                         {teams.length > 0 ? (
                             <ul className="space-y-4">
                                 {teams.map((team) => (
-                                    <li key={team._id} className="border rounded-lg p-4 hover:shadow-md">
+                                    <li
+                                        key={team._id}
+                                        className="border rounded-lg p-4 hover:shadow-md cursor-pointer"
+                                        onClick={() => handleTeamClick(team._id)}
+                                    >
                                         <div className="font-bold">{team.teamName}</div>
                                         <ul className="text-gray-500 mt-2">
                                             {team.members?.length > 0 ? (

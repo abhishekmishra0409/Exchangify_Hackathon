@@ -29,11 +29,18 @@ const getTeamsByCollab = async (collabId) => {
     return response.data.teams;
 };
 
+// Get a team by its ID
+const getTeamById = async (teamId) => {
+    const response = await axios.get(`${base_url}collab/team/${teamId}`, config);
+    return response.data.team;
+};
+
 const collabService = {
     createCollab,
     getMyCollabs,
     createTeam,
     getTeamsByCollab,
+    getTeamById,
 };
 
 export default collabService;

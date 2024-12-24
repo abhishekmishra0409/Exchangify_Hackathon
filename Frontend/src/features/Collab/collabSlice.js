@@ -4,6 +4,7 @@ import collabService from './collabService';
 const initialState = {
     collabs: [],
     teams: [],
+    teamDetail: null,
     isLoading: false,
     isError: false,
     message: '',
@@ -57,6 +58,17 @@ export const getTeamsByCollab = createAsyncThunk(
         }
     }
 );
+// Thunk to fetch a team by its ID
+export const getTeamById = createAsyncThunk(
+    'collab/getTeamById',
+    async (teamId, thunkAPI) => {
+        try {
+            return await collabService.getTeamById(teamId);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+        }
+    }
+);
 
 const collabSlice = createSlice({
     name: 'collab',
@@ -65,6 +77,7 @@ const collabSlice = createSlice({
         reset: (state) => {
             state.collabs = [];
             state.teams = [];
+            state.teamDetail = null;
             state.isLoading = false;
             state.isError = false;
             state.message = '';
@@ -92,6 +105,18 @@ const collabSlice = createSlice({
             })
             .addCase(getTeamsByCollab.fulfilled, (state, action) => {
                 state.teams = action.payload;
+            })
+            .addCase(getTeamById.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getTeamById.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.teamDetail = action.payload;
+            })
+            .addCase(getTeamById.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
             });
     },
 });

@@ -43,11 +43,26 @@ export const respondToRequest = createAsyncThunk(
     }
 );
 
+// Thunk to get invites by team ID
+export const getInvitesByTeamId = createAsyncThunk(
+    'invite/getInvitesByTeamId',
+    async (teamId, thunkAPI) => {
+        try {
+            return await inviteService.getInvitesByTeamId(teamId);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message || error.message
+            );
+        }
+    }
+);
+
 const inviteSlice = createSlice({
     name: 'invite',
     initialState: {
         invites: [],
         requests: [],
+        teamInvites: [], // Add this field to store invites by team ID
         isLoading: false,
         isSuccess: false,
         isError: false,
@@ -102,12 +117,26 @@ const inviteSlice = createSlice({
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.message = action.payload.message;
-                // Update the request list by removing the handled request
                 state.requests = state.requests.filter(
                     (req) => req._id !== action.meta.arg.requestId
                 );
             })
             .addCase(respondToRequest.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
+            // Get invites by team ID
+            .addCase(getInvitesByTeamId.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getInvitesByTeamId.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.teamInvites = action.payload.invites;
+            })
+            .addCase(getInvitesByTeamId.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

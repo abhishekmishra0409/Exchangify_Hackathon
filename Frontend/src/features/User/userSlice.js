@@ -26,6 +26,15 @@ export const getUserDetails = createAsyncThunk('user/getDetails', async ( thunkA
     }
 });
 
+export const getUsersBySkills = createAsyncThunk('user/getUsersBySkills', async (skills, thunkAPI) => {
+    try {
+        return await userService.getUsersBySkills(skills);
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.message || 'Failed to fetch users by skills');
+    }
+});
+
+
 export const updateUserDetails = createAsyncThunk('user/updateDetails', async ({ userData }, thunkAPI) => {
     try {
         return await userService.updateUserDetails(userData);
@@ -37,6 +46,7 @@ export const updateUserDetails = createAsyncThunk('user/updateDetails', async ({
 // Initial state
 const initialState = {
     user: null,
+    users: [],
     isAuthenticated: false,
     isLoading: false,
     error: null,
@@ -118,7 +128,22 @@ const userSlice = createSlice({
             .addCase(updateUserDetails.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
+            })
+            // Get Users by Skills
+            .addCase(getUsersBySkills.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(getUsersBySkills.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.message = 'Users fetched successfully';
+                state.users = action.payload.data; // Assuming the response contains an array of users in `data`
+            })
+            .addCase(getUsersBySkills.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
             });
+
     },
 });
 

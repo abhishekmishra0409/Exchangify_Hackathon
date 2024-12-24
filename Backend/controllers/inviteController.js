@@ -105,3 +105,34 @@ exports.respondToRequest = async (req, res) => {
     }
 };
 
+
+// Fetch invites by team ID and count users who received invites
+exports.getInvitesByTeamId = async (req, res) => {
+    const { teamId } = req.params;
+
+    try {
+        // Verify the team exists
+        const team = await Team.findById(teamId);
+        if (!team) {
+            return res.status(404).json({ message: "Team not found." });
+        }
+
+        // Fetch all invites for the given team ID
+        const invites = await Invite.find({ team: teamId })
+            .populate("sender", "name email") // Populate sender details
+            .populate("receiver", "name email"); // Populate receiver details
+
+        // Count unique receivers
+        const uniqueReceivers = new Set(invites.map((invite) => invite.receiver._id.toString()));
+        const userCount = uniqueReceivers.size;
+
+        res.status(200).json({
+            message: `Found ${userCount} users who received invites.`,
+            userCount,
+            invites,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "An error occurred while fetching invites." });
+    }
+};

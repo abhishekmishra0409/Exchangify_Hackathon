@@ -3,7 +3,7 @@ const router = express.Router();
 const {
     sendInvite,
     viewRequests,
-    respondToRequest,
+    respondToRequest, getInvitesByTeamId,
 } = require("../controllers/inviteController");
 const { checkUser } = require("../middlewares/authMiddleware");
 
@@ -15,5 +15,9 @@ router.get("/view-requests", checkUser, viewRequests);
 
 // Respond to a request
 router.post("/respond-request", checkUser, respondToRequest);
+// Route to get invites by team ID
+router.get("/team/:teamId/invites", checkUser, getInvitesByTeamId);
+
+
 
 module.exports = router;

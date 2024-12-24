@@ -7,7 +7,7 @@ const collabController = {
     // Create a new collaboration
     createCollab: async (req, res) => {
         try {
-            const user = req.user.id
+            const user = req.user.id;
 
             const { name, description, requirements, tags } = req.body;
 
@@ -38,10 +38,10 @@ const collabController = {
             const { collabId, teamName } = req.body;
 
             // Validate required fields
-            if (!collabId || !teamName ) {
+            if (!collabId || !teamName) {
                 return res.status(400).json({ message: "All fields are required." });
             }
-            // console.log(collabId)
+
             // Check if the collab exists
             const collab = await Collab.findById(collabId);
             if (!collab) {
@@ -57,7 +57,7 @@ const collabController = {
             const team = await Team.create({
                 teamName: teamName,
                 collabId,
-                createdBy: req.user._id, // The user who creates the team
+                createdBy: req.user._id,
             });
 
             // Add the team to the collab
@@ -100,6 +100,29 @@ const collabController = {
             res.status(200).json({ teams });
         } catch (error) {
             console.error("Error fetching teams:", error);
+            res.status(500).json({ message: "Server error." });
+        }
+    },
+
+    // Fetch a team by its ID
+    getTeamById: async (req, res) => {
+        try {
+            const { teamId } = req.params;
+
+            // Validate team ID
+            if (!teamId) {
+                return res.status(400).json({ message: "Team ID is required." });
+            }
+
+            // Fetch the team by ID
+            const team = await Team.findById(teamId);
+            if (!team) {
+                return res.status(404).json({ message: "Team not found." });
+            }
+
+            res.status(200).json({ team });
+        } catch (error) {
+            console.error("Error fetching team by ID:", error);
             res.status(500).json({ message: "Server error." });
         }
     },

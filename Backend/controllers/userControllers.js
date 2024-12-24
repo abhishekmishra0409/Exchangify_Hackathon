@@ -201,4 +201,47 @@ const updateUserDetails = async (req, res) => {
     }
 };
 
-module.exports = { signupController, loginController, getAllDetails, updateUserDetails };
+const getUsersBySkills = async (req, res) => {
+    try {
+        const { skills } = req.query;
+
+        if (!skills || skills.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide skills to search for",
+            });
+        }
+
+        const skillArray = skills.split(',').map(skill => skill.trim());
+
+        const users = await User.find({ skills: { $in: skillArray } }).select('-password');
+
+        if (!users || users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No users found with the specified skills",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Users retrieved successfully",
+            data: users,
+        });
+    } catch (error) {
+        console.error('Error fetching users by skills:', error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error while fetching users by skills",
+            error: error.message,
+        });
+    }
+};
+
+module.exports = {
+    signupController,
+    loginController,
+    getAllDetails,
+    updateUserDetails,
+    getUsersBySkills
+};
