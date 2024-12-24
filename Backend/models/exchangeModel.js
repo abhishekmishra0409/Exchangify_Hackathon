@@ -1,36 +1,61 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-
-const exchangeSchema = new mongoose.Schema({
-    senderId: {
+const serviceExchangeSchema = new mongoose.Schema({
+    requester: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
+        ref: 'User',
+        required: true,
     },
-    skillsOffered: [{
-        type: String,
-        required: true
-    }],
-    skillsRequested: [{
-        type: String,
-        required: true
-    }],
-    proposal: {
-        type: String,
-        required: true
+    responder: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
-    sentInvites: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
-    receiverId:
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }
-    
+    exchangeType: {
+        type: String,
+        enum: ['skill', 'money', 'project'],
+        required: true,
+    },
+    requesterSkills: {
+        type: [String],
+        default: [],
+    },
+    responderSkills: {
+        type: [String],
+        default: [],
+    },
+    monetaryExchange: {
+        amount: {
+            type: Number,
+            default: 0,
+        },
+        currency: {
+            type: String,
+            default: 'USD',
+        },
+    },
+    projectExchange: {
+        description: {
+            type: String,
+        },
+        deliverables: {
+            type: [String],
+            default: [],
+        },
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'accepted', 'declined'],
+        default: 'pending',
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
-module.exports = mongoose.model("Exchange", exchangeSchema);
+module.exports = mongoose.model('ServiceExchange', serviceExchangeSchema);

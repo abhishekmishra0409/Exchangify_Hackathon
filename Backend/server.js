@@ -2,18 +2,22 @@ const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const path = require("path");
+const morgan = require('morgan');
+
 
 // Importing routes
 const authRoutes = require("./routes/authenticationRoutes");
 const collabRoutes = require("./routes/collabRoute")
 const inviteRoutes = require("./routes/inviteRoute")
 const postRoute = require("./routes/postRoute")
+const exchangeRoute = require("./routes/exchangeRoute")
 
 // Environment variables
 require("dotenv").config();
 
 // Initialize express app
 const app = express();
+app.use(morgan('dev'));
 
 // Define the port
 const port = process.env.PORT || 3000;
@@ -53,6 +57,7 @@ app.use("/auth", authRoutes);
 app.use("/collab", collabRoutes);
 app.use("/invite", inviteRoutes);
 app.use("/posts", postRoute);
+app.use("/exchange", exchangeRoute);
 
 
 // Handle 404 errors

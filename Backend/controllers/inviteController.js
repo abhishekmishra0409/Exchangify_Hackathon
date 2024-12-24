@@ -2,6 +2,7 @@ const Invite = require("../models/inivitationModel");
 const Team = require("../models/teamModel");
 const Request = require("../models/requestModel");
 const Collab = require("../models/collabModel");
+const User = require("../models/userModel");
 const { sendEmail } = require("../configs/nodemailerConfig");
 const { collaborationInviteTemplate } = require("../configs/EmailTemplates/collaborationInviteTemplate");
 

@@ -23,8 +23,8 @@ const InviteSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["pending", "accepted", "declined"],
-        default: "pending",
+        enum: ['pending', 'accepted', 'declined'],
+        default: 'pending',
     },
     message: {
         type: String,

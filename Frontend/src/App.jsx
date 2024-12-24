@@ -15,6 +15,7 @@ import Profile from "./Pages/Profile.jsx";
 import CreateProposal from './Pages/CreateProposal.jsx';
 import CreatePost from './Pages/CreatePost.jsx';
 import TeamDetail from "./Pages/TeamDetail.jsx";
+import Requests from "./Pages/Requests.jsx";
 
 function App() {
     return (
@@ -41,6 +42,7 @@ function App() {
                         <Route path="collaboration" element={<Collaboration />} />
                         <Route path='create-proposal' element={<CreateProposal />} />
                         <Route path="create-post" element={<CreatePost />} />
+                        <Route path="requests" element={<Requests />} />
                         <Route path="expertise-exchange" element={<ExpertiseExchange />} />
                         <Route path="settings" element={<Settings />} />
                     </Route>

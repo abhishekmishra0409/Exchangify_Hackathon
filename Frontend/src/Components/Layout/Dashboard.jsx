@@ -49,6 +49,7 @@ const Dashboard = () => {
                     <div className="w-11/12 flex flex-col space-y-2">
                         {[
                             { name: "Home", route: "/dashboard" },
+                            { name: "Requests", route: "/dashboard/requests" },
                             { name: "Collaboration", route: "/dashboard/collaboration" },
                             { name: "Create Post", route: "/dashboard/create-post" },
                             { name: "Expertise Exchange", route: "/dashboard/expertise-exchange" },
